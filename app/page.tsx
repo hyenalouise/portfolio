@@ -2,6 +2,9 @@
 
 import Image from "next/image";
 import Footer from "@/components/layout/Footer";
+
+const BLUR_URL =
+  "data:image/png;base64,iVBORw0KGgoAAAANSUhEUgAAAAEAAAABCAYAAAAfFcSJAAAADUlEQVR42mNkYPhfDwAChwGA60e6kgAAAABJRU5ErkJggg==";
 import { useEffect, useRef, useState } from "react";
 import { PERSONAL_INFO, PROJECTS, EXPERIENCES } from "@/lib/data";
 import { GitHubIcon, LinkedInIcon, BehanceIcon } from "@/components/ui/Icons";
@@ -86,7 +89,8 @@ function ProjectCard({ project }: { project: typeof PROJECTS[0] }) {
           <>
             <Image src={project.image} alt={project.title} fill
               className="object-cover object-top transition-transform duration-500 group-hover:scale-105"
-              sizes="(max-width:640px) 100vw,(max-width:1024px) 50vw,33vw" />
+              sizes="(max-width:640px) 100vw,(max-width:1024px) 50vw,33vw"
+              placeholder="blur" blurDataURL={BLUR_URL} />
             <div className="absolute inset-0 bg-gradient-to-t from-black/20 to-transparent" />
           </>
         ) : (
@@ -233,6 +237,8 @@ export default function Home() {
                         className="w-full h-full object-cover object-top"
                         style={{ display: "block" }}
                         priority
+                        placeholder="blur"
+                        blurDataURL={BLUR_URL}
                       />
                     </div>
 
@@ -300,7 +306,8 @@ export default function Home() {
                   <div className="bg-white p-3 pb-10 shadow-2xl shadow-ink/25" style={{ borderRadius: "3px" }}>
                     <div className="aspect-square overflow-hidden" style={{ borderRadius: "2px" }}>
                       <Image src="/ina3.jpg" alt="Ina Louise Magno" width={600} height={600}
-                        className="w-full h-full object-cover object-top" style={{ display: "block" }} priority />
+                        className="w-full h-full object-cover object-top" style={{ display: "block" }} priority
+                        placeholder="blur" blurDataURL={BLUR_URL} />
                     </div>
                     <p className="text-center text-xs font-medium text-ink/30 mt-2 tracking-wide font-mono">hanoi, 2024</p>
                   </div>
@@ -377,7 +384,8 @@ export default function Home() {
                             <div className={`w-10 h-10 rounded-full ${exp.logoBg ?? "bg-ink/5"} border border-ink/10 flex items-center justify-center overflow-hidden shadow-sm`}>
                               {exp.logo ? (
                                 <Image src={exp.logo} alt={exp.org} width={36} height={36}
-                                  className="w-full h-full object-contain" />
+                                  className="w-full h-full object-contain"
+                                  placeholder="blur" blurDataURL={BLUR_URL} />
                               ) : (
                                 <span className="text-xs font-black text-ink/30">{exp.org[0]}</span>
                               )}
