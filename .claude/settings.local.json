@@ -1,0 +1,11 @@
+{
+  "permissions": {
+    "allow": [
+      "WebFetch(domain:www.fancycomponents.dev)",
+      "Bash(cp \"/Users/inalouisemagno/Downloads/Untitled design \\(1\\)/salaryiq.png\" /Users/inalouisemagno/Projects/portfolio/public/projects/salaryiq.png)",
+      "Bash(cp \"/Users/inalouisemagno/Downloads/Untitled design \\(1\\)/indonesiaemissions.png\" /Users/inalouisemagno/Projects/portfolio/public/projects/emissions.png)",
+      "Bash(cp \"/Users/inalouisemagno/Downloads/Untitled design \\(1\\)/sqlanalytics.png\" /Users/inalouisemagno/Projects/portfolio/public/projects/sql.png)",
+      "Bash(npm run:*)"
+    ]
+  }
+}
