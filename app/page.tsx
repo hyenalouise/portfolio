@@ -2,9 +2,6 @@
 
 import Image from "next/image";
 import Footer from "@/components/layout/Footer";
-
-const BLUR_URL =
-  "data:image/png;base64,iVBORw0KGgoAAAANSUhEUgAAAAEAAAABCAYAAAAfFcSJAAAADUlEQVR42mNkYPhfDwAChwGA60e6kgAAAABJRU5ErkJggg==";
 import { useEffect, useRef, useState } from "react";
 import { PERSONAL_INFO, PROJECTS, EXPERIENCES } from "@/lib/data";
 import { GitHubIcon, LinkedInIcon, BehanceIcon } from "@/components/ui/Icons";
@@ -80,17 +77,32 @@ function useReveal() {
   return ref;
 }
 
+/* ── org logo ─────────────────────────────────────────────── */
+function OrgLogo({ src, alt, bg }: { src: string; alt: string; bg?: string }) {
+  const [loaded, setLoaded] = useState(false);
+  return (
+    <div className={`relative w-10 h-10 rounded-full ${bg ?? "bg-ink/5"} border border-ink/10 flex items-center justify-center overflow-hidden shadow-sm`}>
+      {!loaded && <div className="absolute inset-0 animate-pulse bg-ink/8 rounded-full" />}
+      <Image src={src} alt={alt} width={36} height={36}
+        className={`w-full h-full object-contain transition-opacity duration-500 ${loaded ? "opacity-100" : "opacity-0"}`}
+        onLoad={() => setLoaded(true)} />
+    </div>
+  );
+}
+
 /* ── project card ─────────────────────────────────────────── */
 function ProjectCard({ project }: { project: typeof PROJECTS[0] }) {
+  const [imgLoaded, setImgLoaded] = useState(false);
   return (
     <article className={`group flex flex-col rounded-2xl border border-ink/8 overflow-hidden bg-white ${hoverBorder[project.color]} hover:shadow-2xl hover:shadow-ink/10 hover:-translate-y-2 transition-all duration-300`}>
       <div className="relative aspect-[4/3] overflow-hidden shrink-0">
         {project.image ? (
           <>
+            {!imgLoaded && <div className="absolute inset-0 animate-pulse bg-ink/8 z-10" />}
             <Image src={project.image} alt={project.title} fill
-              className="object-cover object-top transition-transform duration-500 group-hover:scale-105"
+              className={`object-cover object-top transition-all duration-500 group-hover:scale-105 ${imgLoaded ? "opacity-100" : "opacity-0"}`}
               sizes="(max-width:640px) 100vw,(max-width:1024px) 50vw,33vw"
-              placeholder="blur" blurDataURL={BLUR_URL} />
+              onLoad={() => setImgLoaded(true)} />
             <div className="absolute inset-0 bg-gradient-to-t from-black/20 to-transparent" />
           </>
         ) : (
@@ -136,8 +148,9 @@ function ProjectCard({ project }: { project: typeof PROJECTS[0] }) {
 
 /* ── page ─────────────────────────────────────────────────── */
 export default function Home() {
-  const [wiggling, setWiggling] = useState(false);
-  const [showTop,  setShowTop]  = useState(false);
+  const [wiggling,      setWiggling]      = useState(false);
+  const [showTop,       setShowTop]       = useState(false);
+  const [polaroidLoaded, setPolaroidLoaded] = useState(false);
   const aboutRef    = useReveal();
   const projectsRef = useReveal();
 
@@ -228,17 +241,17 @@ export default function Home() {
                     style={{ borderRadius: "3px" }}>
 
                     {/* Square photo */}
-                    <div className="overflow-hidden aspect-square" style={{ borderRadius: "2px" }}>
+                    <div className="relative overflow-hidden aspect-square" style={{ borderRadius: "2px" }}>
+                      {!polaroidLoaded && <div className="absolute inset-0 animate-pulse bg-ink/8 z-10" />}
                       <Image
                         src="/ina3.jpg"
                         alt="Ina Louise Magno"
                         width={1200}
                         height={1200}
-                        className="w-full h-full object-cover object-top"
+                        className={`w-full h-full object-cover object-top transition-opacity duration-500 ${polaroidLoaded ? "opacity-100" : "opacity-0"}`}
                         style={{ display: "block" }}
                         priority
-                        placeholder="blur"
-                        blurDataURL={BLUR_URL}
+                        onLoad={() => setPolaroidLoaded(true)}
                       />
                     </div>
 
@@ -304,10 +317,12 @@ export default function Home() {
                   onMouseLeave={e => { (e.currentTarget as HTMLDivElement).style.transform = "rotate(-3deg)"; }}
                 >
                   <div className="bg-white p-3 pb-10 shadow-2xl shadow-ink/25" style={{ borderRadius: "3px" }}>
-                    <div className="aspect-square overflow-hidden" style={{ borderRadius: "2px" }}>
+                    <div className="relative aspect-square overflow-hidden" style={{ borderRadius: "2px" }}>
+                      {!polaroidLoaded && <div className="absolute inset-0 animate-pulse bg-ink/8 z-10" />}
                       <Image src="/ina3.jpg" alt="Ina Louise Magno" width={600} height={600}
-                        className="w-full h-full object-cover object-top" style={{ display: "block" }} priority
-                        placeholder="blur" blurDataURL={BLUR_URL} />
+                        className={`w-full h-full object-cover object-top transition-opacity duration-500 ${polaroidLoaded ? "opacity-100" : "opacity-0"}`}
+                        style={{ display: "block" }} priority
+                        onLoad={() => setPolaroidLoaded(true)} />
                     </div>
                     <p className="text-center text-xs font-medium text-ink/30 mt-2 tracking-wide font-mono">hanoi, 2024</p>
                   </div>
@@ -381,15 +396,13 @@ export default function Home() {
                       {EXPERIENCES.map((exp, i) => (
                         <div key={i} className="relative flex gap-4 pb-6 last:pb-0">
                           <div className="relative z-10 shrink-0">
-                            <div className={`w-10 h-10 rounded-full ${exp.logoBg ?? "bg-ink/5"} border border-ink/10 flex items-center justify-center overflow-hidden shadow-sm`}>
-                              {exp.logo ? (
-                                <Image src={exp.logo} alt={exp.org} width={36} height={36}
-                                  className="w-full h-full object-contain"
-                                  placeholder="blur" blurDataURL={BLUR_URL} />
-                              ) : (
+                            {exp.logo ? (
+                              <OrgLogo src={exp.logo} alt={exp.org} bg={exp.logoBg} />
+                            ) : (
+                              <div className={`w-10 h-10 rounded-full ${exp.logoBg ?? "bg-ink/5"} border border-ink/10 flex items-center justify-center shadow-sm`}>
                                 <span className="text-xs font-black text-ink/30">{exp.org[0]}</span>
-                              )}
-                            </div>
+                              </div>
+                            )}
                           </div>
                           <div className="flex-1 pt-1">
                             <div className="flex flex-wrap items-baseline gap-x-2 gap-y-0.5 mb-0.5">
